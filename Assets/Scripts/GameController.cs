@@ -76,35 +76,19 @@ public class GameController : MonoBehaviour
     {
         var speed = 2f;
         var distance = Vector2.Distance(_enemiesStartPoint.position, _listPointInPath[0].position);
-        float timeMoveBetweenTwoPoint = distance / speed;
+        float timeMoveBetweenTwoPoint = 0;
 
-        LeanTween.move(enemy.gameObject, _listPointInPath[0].position, timeMoveBetweenTwoPoint);
-        await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
+        for(int i = 0; i< _listPointInPath.Count; i++)
+        {
+            distance = i > 0? 
+                Vector2.Distance(_listPointInPath[i - 1].position, _listPointInPath[i].position) :
+                Vector2.Distance(_enemiesStartPoint.position, _listPointInPath[0].position);
 
-        distance = Vector2.Distance(_listPointInPath[0].position, _listPointInPath[1].position);
-        timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, _listPointInPath[1].position, timeMoveBetweenTwoPoint);
-        await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
+            timeMoveBetweenTwoPoint = distance / speed;
 
-        distance = Vector2.Distance(_listPointInPath[1].position, _listPointInPath[2].position);
-        timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, _listPointInPath[2].position, timeMoveBetweenTwoPoint);
-        await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
-
-        distance = Vector2.Distance(_listPointInPath[2].position, _listPointInPath[3].position);
-        timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, _listPointInPath[3].position, timeMoveBetweenTwoPoint);
-        await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
-
-        distance = Vector2.Distance(_listPointInPath[3].position, _listPointInPath[4].position);
-        timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, _listPointInPath[4].position, timeMoveBetweenTwoPoint);
-        await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
-
-        distance = Vector2.Distance(_listPointInPath[4].position, _listPointInPath[5].position);
-        timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, _listPointInPath[5].position, timeMoveBetweenTwoPoint);
-        await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
+            LeanTween.move(enemy.gameObject, _listPointInPath[i].position, timeMoveBetweenTwoPoint);
+            await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
+        }
 
         distance = Vector2.Distance(_listPointInPath[5].position, _listPointInPath[0].position);
         timeMoveBetweenTwoPoint = distance / speed;

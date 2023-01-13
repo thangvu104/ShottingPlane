@@ -61,7 +61,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 274269f5a65a5ed45af09c6743872ce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _listEndPointOfBullet: []
+  _listEndPointOfBullet:
+  - {fileID: 4518219019088158078}
+  - {fileID: 285507309694135375}
+  - {fileID: 6935264378001268905}
   _bulletPrefab: {fileID: 8533900811150601554, guid: 9556b598a53fef042b0e0ef7fbd1f970, type: 3}
 --- !u!1 &2811717688817192747
 GameObject:
@@ -201,7 +204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e23152c653bafeb4d8007e57208ce7be, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aa347e9ba47197f429a961b9fc9f7c85, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
