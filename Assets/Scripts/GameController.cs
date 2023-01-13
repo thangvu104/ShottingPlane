@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour
     private int _totalEnemies = 12;
 
     private Player _player = default;
+    private int _totalNumberOfEnemiesDestroyed = 0;
 
     void Start()
     {
@@ -42,7 +43,12 @@ public class GameController : MonoBehaviour
     {
         _player = Instantiate(_playerPlanePrefab, _playerStartPoint.position, Quaternion.identity, _gameLayout).GetComponent<Player>();
 
+        _player.name = "Player";
         _player.BulletsLayout = _bulletsLayout.transform;
+        _player.GetComponent<Player>().OnLoseCallback = () =>
+        {
+            Debug.Log("Lose");
+        };
     }
     private void PlayBackgroundEffect()
     {
@@ -57,6 +63,15 @@ public class GameController : MonoBehaviour
         {
             var enemyContainer = Instantiate(_enemyPrefab, _enemiesLayout.transform);
             var enemyScript = enemyContainer.transform.Find("EnemySprite")?.GetComponent<Enemies>();
+            enemyScript.OnDestroyCallback = () =>
+            {
+                _totalNumberOfEnemiesDestroyed++;
+
+                if(_totalNumberOfEnemiesDestroyed >= _totalEnemies)
+                {
+                    Debug.Log("Win");
+                }
+            };
 
             _enemies.Add(enemyScript);
         }
@@ -64,6 +79,8 @@ public class GameController : MonoBehaviour
 
         for(int i = _totalEnemies - 1; i >= 0; i--)
         {
+            if (this == null) return;
+
             _enemies[i].transform.position = _enemiesStartPoint.position;
             _enemies[i].gameObject.SetActive(true);
 
@@ -80,15 +97,19 @@ public class GameController : MonoBehaviour
 
         for(int i = 0; i< _listPointInPath.Count; i++)
         {
+            if (this == null || enemy == null) return;
+
             distance = i > 0? 
                 Vector2.Distance(_listPointInPath[i - 1].position, _listPointInPath[i].position) :
                 Vector2.Distance(_enemiesStartPoint.position, _listPointInPath[0].position);
 
             timeMoveBetweenTwoPoint = distance / speed;
 
-            LeanTween.move(enemy.gameObject, _listPointInPath[i].position, timeMoveBetweenTwoPoint);
+            LeanTween.move(enemy?.gameObject, _listPointInPath[i].position, timeMoveBetweenTwoPoint);
             await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
         }
+
+        if (this == null) return;
 
         distance = Vector2.Distance(_listPointInPath[5].position, _listPointInPath[0].position);
         timeMoveBetweenTwoPoint = distance / speed;
