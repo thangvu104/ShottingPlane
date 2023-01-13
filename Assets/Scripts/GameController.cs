@@ -7,51 +7,67 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private Image background_1;
-    [SerializeField] private Image background_2;
-    [SerializeField] private Canvas mainCanvas;
-    [SerializeField] private GameObject enemiesLayout;
-    [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Transform startPoint;
-    [SerializeField] private List<Transform> listPointInPath;
+    [SerializeField] private Image _background_1;
+    [SerializeField] private Image _background_2;
+    [SerializeField] private Canvas _mainCanvas;
+    [SerializeField] private Transform _gameLayout;
 
-    private List<Enemies> enemies = new List<Enemies>();
-    private RectTransform mainCanvasRecttransform;
-    private float speedMoveBackground = 50;
-    private int totalEnemies = 12;
+    [SerializeField] private GameObject _enemiesLayout;
+    [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] private Transform _enemiesStartPoint;
+    [SerializeField] private List<Transform> _listPointInPath;
+
+    [SerializeField] private Transform _playerStartPoint;
+    [SerializeField] private GameObject _bulletsLayout;
+    [SerializeField] private GameObject _playerPlanePrefab;
+
+    private List<Enemies> _enemies = new List<Enemies>();
+    private RectTransform _mainCanvasRecttransform;
+    private float _speedMoveBackground = 50;
+    private int _totalEnemies = 12;
+
+    private Player _player = default;
 
     void Start()
     {
-        mainCanvasRecttransform = mainCanvas.GetComponent<RectTransform>();
+        _mainCanvasRecttransform = _mainCanvas.GetComponent<RectTransform>();
+
         PlayBackgroundEffect();
+        CreatePlayerPlane();
 
         SpawnEnemies();
     }
 
+    private void CreatePlayerPlane()
+    {
+        _player = Instantiate(_playerPlanePrefab, _playerStartPoint.position, Quaternion.identity, _gameLayout).GetComponent<Player>();
+
+        _player.BulletsLayout = _bulletsLayout.transform;
+    }
     private void PlayBackgroundEffect()
     {
-        var distanceMove = mainCanvasRecttransform.sizeDelta.y;
-        LeanTween.moveLocalY(background_1.gameObject, -mainCanvasRecttransform.sizeDelta.y, distanceMove / speedMoveBackground).setRepeat(Int32.MaxValue).setOnCompleteOnRepeat(true);
-        LeanTween.moveLocalY(background_2.gameObject, 0, distanceMove / speedMoveBackground).setRepeat(Int32.MaxValue).setOnCompleteOnRepeat(true);
+        var distanceMove = _mainCanvasRecttransform.sizeDelta.y;
+        LeanTween.moveLocalY(_background_1.gameObject, -_mainCanvasRecttransform.sizeDelta.y, distanceMove / _speedMoveBackground).setRepeat(Int32.MaxValue).setOnCompleteOnRepeat(true);
+        LeanTween.moveLocalY(_background_2.gameObject, 0, distanceMove / _speedMoveBackground).setRepeat(Int32.MaxValue).setOnCompleteOnRepeat(true);
     }
 
     private async void SpawnEnemies()
     {
-        for(int i = 0; i < totalEnemies; i++)
+        for(int i = 0; i < _totalEnemies; i++)
         {
-            var enemyContainer = Instantiate(enemyPrefab, enemiesLayout.transform);
+            var enemyContainer = Instantiate(_enemyPrefab, _enemiesLayout.transform);
             var enemyScript = enemyContainer.transform.Find("EnemySprite")?.GetComponent<Enemies>();
 
-            enemies.Add(enemyScript);
+            _enemies.Add(enemyScript);
         }
 
 
-        for(int i = totalEnemies - 1; i >= 0; i--)
+        for(int i = _totalEnemies - 1; i >= 0; i--)
         {
-            enemies[i].transform.position = startPoint.position;
-            enemies[i].gameObject.SetActive(true);
+            _enemies[i].transform.position = _enemiesStartPoint.position;
+            _enemies[i].gameObject.SetActive(true);
 
-            EnemyMoveInPath(enemies[i]);
+            EnemyMoveInPath(_enemies[i]);
             await Task.Delay(1000);
         }
     }
@@ -59,40 +75,40 @@ public class GameController : MonoBehaviour
     private async void EnemyMoveInPath(Enemies enemy)
     {
         var speed = 2f;
-        var distance = Vector2.Distance(startPoint.position, listPointInPath[0].position);
+        var distance = Vector2.Distance(_enemiesStartPoint.position, _listPointInPath[0].position);
         float timeMoveBetweenTwoPoint = distance / speed;
 
-        LeanTween.move(enemy.gameObject, listPointInPath[0].position, timeMoveBetweenTwoPoint);
+        LeanTween.move(enemy.gameObject, _listPointInPath[0].position, timeMoveBetweenTwoPoint);
         await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
 
-        distance = Vector2.Distance(listPointInPath[0].position, listPointInPath[1].position);
+        distance = Vector2.Distance(_listPointInPath[0].position, _listPointInPath[1].position);
         timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, listPointInPath[1].position, timeMoveBetweenTwoPoint);
+        LeanTween.move(enemy.gameObject, _listPointInPath[1].position, timeMoveBetweenTwoPoint);
         await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
 
-        distance = Vector2.Distance(listPointInPath[1].position, listPointInPath[2].position);
+        distance = Vector2.Distance(_listPointInPath[1].position, _listPointInPath[2].position);
         timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, listPointInPath[2].position, timeMoveBetweenTwoPoint);
+        LeanTween.move(enemy.gameObject, _listPointInPath[2].position, timeMoveBetweenTwoPoint);
         await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
 
-        distance = Vector2.Distance(listPointInPath[2].position, listPointInPath[3].position);
+        distance = Vector2.Distance(_listPointInPath[2].position, _listPointInPath[3].position);
         timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, listPointInPath[3].position, timeMoveBetweenTwoPoint);
+        LeanTween.move(enemy.gameObject, _listPointInPath[3].position, timeMoveBetweenTwoPoint);
         await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
 
-        distance = Vector2.Distance(listPointInPath[3].position, listPointInPath[4].position);
+        distance = Vector2.Distance(_listPointInPath[3].position, _listPointInPath[4].position);
         timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, listPointInPath[4].position, timeMoveBetweenTwoPoint);
+        LeanTween.move(enemy.gameObject, _listPointInPath[4].position, timeMoveBetweenTwoPoint);
         await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
 
-        distance = Vector2.Distance(listPointInPath[4].position, listPointInPath[5].position);
+        distance = Vector2.Distance(_listPointInPath[4].position, _listPointInPath[5].position);
         timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, listPointInPath[5].position, timeMoveBetweenTwoPoint);
+        LeanTween.move(enemy.gameObject, _listPointInPath[5].position, timeMoveBetweenTwoPoint);
         await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
 
-        distance = Vector2.Distance(listPointInPath[5].position, listPointInPath[0].position);
+        distance = Vector2.Distance(_listPointInPath[5].position, _listPointInPath[0].position);
         timeMoveBetweenTwoPoint = distance / speed;
-        LeanTween.move(enemy.gameObject, listPointInPath[0].position, timeMoveBetweenTwoPoint);
+        LeanTween.move(enemy.gameObject, _listPointInPath[0].position, timeMoveBetweenTwoPoint);
         await Task.Delay((int)(timeMoveBetweenTwoPoint * 1000));
 
         var endPoint = enemy.transform.parent.TransformPoint(Vector2.zero);
